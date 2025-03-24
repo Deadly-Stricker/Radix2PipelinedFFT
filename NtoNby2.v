@@ -41,7 +41,7 @@ module FourtoTwo(
     output reg [7:0]out4
 );
     always @(*) begin
-        out1 <= in1;
+        out1<=in1;
         out2<=in3;
         out3<=in2;
         out4<=in4;
