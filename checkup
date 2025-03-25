@@ -1,11 +1,11 @@
-reg [7:0] L12_ou1,L12_ou2,L12_ou3,L12_ou4,L12_ou5,L12_ou6,L12_ou7,L12_ou8;
-    reg [7:0] L12_in1,L12_in2,L12_in3,L12_in4,L12_in5,L12_in6,L12_in7,L12_in8;
+reg [7:0] L13_ou1,L13_ou2,L13_ou3,L13_ou4,L13_ou5,L13_ou6,L13_ou7,L13_ou8;
+    reg [7:0] L13_in1,L13_in2,L13_in3,L13_in4,L13_in5,L13_in6,L13_in7,L13_in8;
 
-    Latch7_0 L12(L11_ou1,clk_2,L12_in1);
-    Latch7_0 L21(L11_ou2,clk_2,L12_in2);
-    Latch7_0 L31(L11_ou3,clk_2,L12_in3);
-    Latch7_0 L41(L11_ou3,clk_2,L12_in3);
-    Latch7_0 L51(L11_ou4,clk_2,L12_in4);
-    Latch7_0 L61(L11_ou5,clk_2,L12_in5);
-    Latch7_0 L71(L11_ou6,clk_2,L12_in6);
-    Latch7_0 L81(L11_ou7,clk_2,L12_in7);
+    Latch7_0 L13(L12_ou1,clk_2,L13_in1);
+    Latch7_0 L23(L12_ou2,clk_2,L13_in2);
+    Latch7_0 L33(L12_ou3,clk_2,L13_in3);
+    Latch7_0 L43(L12_ou3,clk_2,L13_in3);
+    Latch7_0 L53(L12_ou4,clk_2,L13_in4);
+    Latch7_0 L63(L12_ou5,clk_2,L13_in5);
+    Latch7_0 L73(L12_ou6,clk_2,L13_in6);
+    Latch7_0 L83(L12_ou7,clk_2,L13_in7);
