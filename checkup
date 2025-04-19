@@ -9,3 +9,4 @@ reg [7:0] L13_ou1,L13_ou2,L13_ou3,L13_ou4,L13_ou5,L13_ou6,L13_ou7,L13_ou8;
     Latch7_0 L63(L12_ou5,clk_2,L13_in5);
     Latch7_0 L73(L12_ou6,clk_2,L13_in6);
     Latch7_0 L83(L12_ou7,clk_2,L13_in7);
+// lmlkll
