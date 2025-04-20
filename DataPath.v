@@ -59,10 +59,10 @@ module datapath(
     Latch7_0 L42(L11_ou8,clk_1,L12_in8);
 
 
-    DFT2 M4 (L12_in1,L12_in2,3'd1,L12_ou1,L12_ou2);
-    DFT2 M5 (L12_in3,L12_in4,3'd2,L12_ou3,L12_ou4);
-    DFT2 M6 (L12_in5,L12_in6,3'd3,L12_ou5,L12_ou6);
-    DFT2 M7 (L12_in7,L12_in8,3'd4,L12_ou7,L12_ou8);
+    DFT2 M4 (L12_in1,L12_in2,3'd0,L12_ou1,L12_ou2);
+    DFT2 M5 (L12_in3,L12_in4,3'd1,L12_ou3,L12_ou4);
+    DFT2 M6 (L12_in5,L12_in6,3'd2,L12_ou5,L12_ou6);
+    DFT2 M7 (L12_in7,L12_in8,3'd3,L12_ou7,L12_ou8);
     // DFT2 M3 (L12_in1,L12_in2,L12_ou1,L12_ou2);
 
     wire signed[7:0] L13_ou1,L13_ou2,L13_ou3,L13_ou4,L13_ou5,L13_ou6;
