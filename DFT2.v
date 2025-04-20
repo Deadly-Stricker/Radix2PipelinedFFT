@@ -24,9 +24,10 @@ module DFT2(
     end
     reg signed [7:0]outTemp1,outTemp2;
     always @(*) begin
-        out1[7:4]<=Wr[index]*(in1+in2);
-        out2[3:0]<=Wi[index+1]*(in1-in2);
-        out1[3:0]<=Wi[index]*(in1+in2);
-        out2[7:4]<=Wr[index+1]*(in1-in2);
+        out1[7:4]<=in1+Wr[index]*(in2);
+        out1[3:0]<=in1+Wi[index]*(in2);
+        out2[7:4]<=in1-Wr[index]*(in2);
+        out2[3:0]<=in1-Wi[index]*(in2);
+        outTemp2<=(in1-in2);
     end
 endmodule
