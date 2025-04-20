@@ -65,7 +65,7 @@ module datapath(
     DFT2 M7 (L12_in7,L12_in8,3'd3,L12_ou7,L12_ou8);
     // DFT2 M3 (L12_in1,L12_in2,L12_ou1,L12_ou2);
 
-    wire signed[7:0] L13_ou1,L13_ou2,L13_ou3,L13_ou4,L13_ou5,L13_ou6;
+    // wire signed[7:0] L13_ou1,L13_ou2,L13_ou3,L13_ou4,L13_ou5,L13_ou6;
     // reg [7:0] out1,out2,out3,out4,out5,out6,out7,out8;
 
     Latch7_0 L13(L12_ou1,clk_2,out1);
