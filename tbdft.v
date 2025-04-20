@@ -1,7 +1,7 @@
 module testindft;
     reg [7:0] in1,in2;
-    wire [7:0] out1,out2;
-    DFT2 DUT (in1,in2,out1,out2);
+    wire signed[7:0] out1,out2;
+    DFT2 DUT (in1,in2,3'd3,out1,out2);
     initial begin
         // {in1,in2}={8'b1,8'b2};
         in1<=8'b1;

@@ -1,13 +1,13 @@
 module DFT2(
     input [7:0]in1,
     input [7:0]in2,
-    output reg [7:0] real_out1,
+    //output reg [7:0] real_out1,
     // output reg [7:0]imag_out1,
-    output reg [7:0] real_out2
+    //output reg [7:0] real_out2
     // output reg [7:0]imag_out2
-    input index,
-    output reg signed[7:0]out1,
-    output reg signed [7:0]out2
+    input [2:0]index,            // index of input we are looking at
+    output reg signed[7:0]out1,     
+    output reg signed [7:0]out2     // real part | imaginary part
 );
     reg signed [7:0] Wr [3:0];
     reg signed [7:0] Wi [3:0];

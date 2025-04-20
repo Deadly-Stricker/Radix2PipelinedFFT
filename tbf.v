@@ -9,11 +9,12 @@ module testingdatapath;
         #2 clk2 =1; #2 clk2 = 0;
     end
     initial begin
-        $monitor("Time : ",$time,"  input :  %d %d %d %d %d %d %d %d|output : %d %d %d %d %d %d %d %d ",in1,in2,in3,in4,in5,in6,in7,in8,ou1,ou2,ou3,ou4,ou5,ou6,ou7,ou8);
+        // $monitor("Time : ",$time,"  input :  %d %d %d %d %d %d %d %d|output : %d %d %d %d %d %d %d %d ",in1,in2,in3,in4,in5,in6,in7,in8,ou1,ou2,ou3,ou4,ou5,ou6,ou7,ou8);
         // $monitor("Time : ",$time,"  output : %d %d %d %d %d %d %d %d ",ou1,ou2,ou3,ou4,ou5,ou6,ou7,ou8);
+        $monitor("%d",testingdatapath.DFT2.out6);
         #2 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b0,8'b1,8'b10,8'b11,8'b100,8'b101,8'b110,8'b111};
-        #9 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b11,8'b10,8'b1,8'b1000,8'b111,8'b100,8'b110,8'b101};
-        #9 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b111,8'b110,8'b101,8'b100,8'b11,8'b10,8'b1,8'b0};
+        #20 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b11,8'b10,8'b1,8'b1000,8'b111,8'b100,8'b110,8'b101};
+        #20 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b111,8'b110,8'b101,8'b100,8'b11,8'b10,8'b1,8'b0};
         #1000 $finish;
     end
 endmodule
