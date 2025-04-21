@@ -59,22 +59,45 @@ module datapath(
     Latch7_0 L42(L11_ou8,clk_1,L12_in8);
 
 
-    DFT2 M4 (L12_in1,L12_in2,3'd0,L12_ou1,L12_ou2);
-    DFT2 M5 (L12_in3,L12_in4,3'd1,L12_ou3,L12_ou4);
-    DFT2 M6 (L12_in5,L12_in6,3'd2,L12_ou5,L12_ou6);
-    DFT2 M7 (L12_in7,L12_in8,3'd3,L12_ou7,L12_ou8);
+    DFT2 M4 (L12_in1,L12_in2,L12_ou1,L12_ou2);
+    DFT2 M5 (L12_in3,L12_in4,L12_ou3,L12_ou4);
+    DFT2 M6 (L12_in5,L12_in6,L12_ou5,L12_ou6);
+    DFT2 M7 (L12_in7,L12_in8,L12_ou7,L12_ou8);
     // DFT2 M3 (L12_in1,L12_in2,L12_ou1,L12_ou2);
 
-    // wire signed[7:0] L13_ou1,L13_ou2,L13_ou3,L13_ou4,L13_ou5,L13_ou6;
+    wire signed[7:0] L13_ou1,L13_ou2,L13_ou3,L13_ou4,L13_ou5,L13_ou6,L13_ou7,L13_ou8;
+    wire signed[7:0] L13_in1,L13_in2,L13_in3,L13_in4,L13_in5,L13_in6,L13_in7,L13_in8;
     // reg [7:0] out1,out2,out3,out4,out5,out6,out7,out8;
 
-    Latch7_0 L13(L12_ou1,clk_2,out1);
-    Latch7_0 L23(L12_ou2,clk_2,out2);
-    Latch7_0 L33(L12_ou3,clk_2,out3);
+    Latch7_0 L13(L12_ou1,clk_2,L13_in1);
+    Latch7_0 L23(L12_ou2,clk_2,L13_in2);
+    Latch7_0 L33(L12_ou3,clk_2,L13_in3);
     // Latch7_0 L43(L12_ou3,clk_2,out4);
-    Latch7_0 L53(L12_ou4,clk_2,out4);
-    Latch7_0 L63(L12_ou5,clk_2,out5);
-    Latch7_0 L73(L12_ou6,clk_2,out6);
-    Latch7_0 L83(L12_ou7,clk_2,out7);
-    Latch7_0 L43(L12_ou8,clk_2,out8);
+    Latch7_0 L53(L12_ou4,clk_2,L13_in4);
+    Latch7_0 L63(L12_ou5,clk_2,L13_in5);
+    Latch7_0 L73(L12_ou6,clk_2,L13_in6);
+    Latch7_0 L83(L12_ou7,clk_2,L13_in7);
+    Latch7_0 L43(L12_ou8,clk_2,L13_in8);
+
+
+    // DFT4 D1 (L13_in1,L13_in2,L13_in3,L13_in4,out1,out2,out3,out4);
+    // DFT4 D2 (L13_in5,L13_in6,L13_in7,L13_in8,out5,out6,out7,out8);
+    DFT4 D1 (L13_in1,L13_in2,L13_in3,L13_in4,L13_ou1,L13_ou2,L13_ou3,L13_ou4);
+    DFT4 D2 (L13_in4,L13_in5,L13_in6,L13_in7,L13_in8,L13_ou5,L13_ou6,L13_ou7,L13_ou8);
+
+    wire signed[7:0] L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8;
+    wire signed[7:0] L14_ou1,L14_ou2,L14_ou3,L14_ou4,L14_ou5,L14_ou6,L14_ou7,L14_ou8;
+
+
+    Latch7_0 L14(L13_ou1,clk_1,L14_in1);
+    Latch7_0 L24(L13_ou2,clk_1,L14_in2);
+    Latch7_0 L34(L13_ou3,clk_1,L14_in3);
+    // Latch7_0 L43(L12_ou3,clk_2,out4);
+    Latch7_0 L44(L13_ou4,clk_1,L14_in4);
+    Latch7_0 L54(L13_ou5,clk_1,L14_in5);
+    Latch7_0 L64(L13_ou6,clk_1,L14_in6);
+    Latch7_0 L74(L13_ou7,clk_1,L14_in7);
+    Latch7_0 L84(L13_ou8,clk_1,L14_in8);
+
+    
 endmodule
