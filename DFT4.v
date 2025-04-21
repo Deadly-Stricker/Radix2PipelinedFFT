@@ -17,14 +17,14 @@ module DFT4(
     reg signed [7:0] Wi [3:0];
     initial begin
 // twiddle factors
-    Wr[0] = 4'd1;            // Twiddle factors are these 
-    Wr[1] = 4'd0;
-    Wr[2] = -4'd1;
-    Wr[3] = 4'd0;
-    Wi[0] = 4'd0;
-    Wi[1] = -4'd1;
-    Wi[2] = 4'd0;
-    Wi[3] = 4'd1;
+    Wr[0] = 4'sd1;            // Twiddle factors are these 
+    Wr[1] = 4'sd0;
+    Wr[2] = -4'sd1;
+    Wr[3] = 4'sd0;
+    Wi[0] = 4'sd0;
+    Wi[1] = -4'sd1;
+    Wi[2] = 4'sd0;
+    Wi[3] = 4'sd1;
     end
 // temporary variable to debug
     reg signed [7:0]outTemp1,outTemp2;
