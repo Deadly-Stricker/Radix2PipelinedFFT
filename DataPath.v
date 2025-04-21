@@ -99,5 +99,20 @@ module datapath(
     Latch7_0 L74(L13_ou7,clk_1,L14_in7);
     Latch7_0 L84(L13_ou8,clk_1,L14_in8);
 
-    DFT8 F (L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8,out1,out2,out3,out4,out5,out6,out7,out8);
+    DFT8 F (L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8,L14_ou1,L14_ou2,L14_ou3,L14_ou4,L14_ou5,L14_ou6,L14_ou7,L14_ou8);
+
+    wire signed[7:0] L15_in1,L15_in2,L15_in3,L15_in4,L15_in5,L15_in6,L15_in7,L15_in8;
+
+
+    Latch7_0 L15(L14_ou1,clk_2,L15_in1);
+    Latch7_0 L25(L14_ou2,clk_2,L15_in2);
+    Latch7_0 L35(L14_ou3,clk_2,L15_in3);
+    // Latch7_0 L43(L12_ou3,clk_2,out4);
+    Latch7_0 L45(L14_ou4,clk_2,L15_in4);
+    Latch7_0 L55(L14_ou5,clk_2,L15_in5);
+    Latch7_0 L65(L14_ou6,clk_2,L15_in6);
+    Latch7_0 L75(L14_ou7,clk_2,L15_in7);
+    Latch7_0 L85(L14_ou8,clk_2,L15_in8);
+
+    filter Fk(L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8,4'd5,out1,out2,out3,out4,out5,out6,out7,out8);
 endmodule
