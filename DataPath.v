@@ -83,7 +83,7 @@ module datapath(
     // DFT4 D1 (L13_in1,L13_in2,L13_in3,L13_in4,out1,out2,out3,out4);
     // DFT4 D2 (L13_in5,L13_in6,L13_in7,L13_in8,out5,out6,out7,out8);
     DFT4 D1 (L13_in1,L13_in2,L13_in3,L13_in4,L13_ou1,L13_ou2,L13_ou3,L13_ou4);
-    DFT4 D2 (L13_in4,L13_in5,L13_in6,L13_in7,L13_in8,L13_ou5,L13_ou6,L13_ou7,L13_ou8);
+    DFT4 D2 (L13_in5,L13_in6,L13_in7,L13_in8,L13_ou5,L13_ou6,L13_ou7,L13_ou8);
 
     wire signed[7:0] L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8;
     wire signed[7:0] L14_ou1,L14_ou2,L14_ou3,L14_ou4,L14_ou5,L14_ou6,L14_ou7,L14_ou8;
@@ -99,5 +99,5 @@ module datapath(
     Latch7_0 L74(L13_ou7,clk_1,L14_in7);
     Latch7_0 L84(L13_ou8,clk_1,L14_in8);
 
-    
+    DFT8 F (L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8,out1,out2,out3,out4,out5,out6,out7,out8);
 endmodule
