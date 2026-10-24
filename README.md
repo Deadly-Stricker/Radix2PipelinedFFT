@@ -25,12 +25,3 @@ radix-2 butterfly stages. It accepts one 8-point frame per clock when
 with `valid_out` asserted. The transform uses decimation-in-time bit-reversed
 input ordering internally and natural-order output bins.
 
-## Simulation
-
-With Icarus Verilog installed, compile and run the structural testbench from
-the repository directory:
-
-```text
-iverilog -g2012 -s testingdatapath -o fft.vvp DataPath.v complex_add.v complex_sub.v twiddle_w1.v twiddle_w2.v twiddle_w3.v tbf.v
-vvp fft.vvp
-```
