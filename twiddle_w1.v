@@ -1,18 +1,21 @@
-module twiddle_w1(
-    input  signed [7:0] a,
-    output signed [7:0] y
+module twiddle_w1 #(
+    parameter COMPONENT_WIDTH = 19
+)(
+    input signed [(2*COMPONENT_WIDTH)-1:0] a,
+    output signed [(2*COMPONENT_WIDTH)-1:0] y
 );
-    reg signed [4:0] ar, ai;
-    reg signed [13:0] rr, ri, qr, qi;
+    reg signed [COMPONENT_WIDTH-1:0] ar, ai;
+    reg signed [COMPONENT_WIDTH+8:0] rr, ri;
+    reg signed [COMPONENT_WIDTH-1:0] qr, qi;
 
     always @* begin
-        ar = $signed(a[7:4]);
-        ai = $signed(a[3:0]);
+        ar = $signed(a[(2*COMPONENT_WIDTH)-1:COMPONENT_WIDTH]);
+        ai = $signed(a[COMPONENT_WIDTH-1:0]);
         rr = 181 * ar + 181 * ai;
         ri = 181 * ai - 181 * ar;
         qr = rr >>> 8;
         qi = ri >>> 8;
     end
 
-    assign y = {qr[3:0], qi[3:0]};
+    assign y = {qr, qi};
 endmodule

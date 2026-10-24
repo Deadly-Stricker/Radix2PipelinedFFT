@@ -4,10 +4,14 @@ This project implements an 8-point radix-2 pipelined FFT in Verilog.
 
 ## Data format
 
-Each 8-bit sample is a packed complex value:
+Each 32-bit sample is a packed complex value:
 
-- bits `[7:4]`: signed 4-bit real component
-- bits `[3:0]`: signed 4-bit imaginary component
+- bits `[31:16]`: signed 16-bit real component
+- bits `[15:0]`: signed 16-bit imaginary component
+
+The pipeline keeps 19 bits per component internally to accommodate butterfly
+growth. The final outputs are packed back to 16-bit real and imaginary
+components.
 
 The [`radix2_pipelined_fft`](./DataPath.v) module contains three registered
 radix-2 butterfly stages. It accepts one 8-point frame per clock when
