@@ -35,66 +35,46 @@ module radix2_pipelined_fft(
     assign out6 = s3[6];
     assign out7 = s3[7];
 
-    function [7:0] cadd;
-        input signed [7:0] a;
-        input signed [7:0] b;
-        reg signed [4:0] ar, ai, br, bi;
-        reg signed [5:0] rr, ri;
-        begin
-            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
-            br = $signed(b[7:4]); bi = $signed(b[3:0]);
-            rr = ar + br; ri = ai + bi;
-            cadd = {rr[3:0], ri[3:0]};
-        end
-    endfunction
+    wire signed [7:0] s1_add0, s1_sub0, s1_add2, s1_sub2;
+    wire signed [7:0] s1_add1, s1_sub1, s1_add3, s1_sub3;
+    wire signed [7:0] s2_add0, s2_sub0, s2_add1, s2_sub1;
+    wire signed [7:0] s2_add2, s2_sub2, s2_add3, s2_sub3;
+    wire signed [7:0] s3_add0, s3_sub0, s3_add1, s3_sub1;
+    wire signed [7:0] s3_add2, s3_sub2, s3_add3, s3_sub3;
+    wire signed [7:0] s2_twiddle1, s2_twiddle3;
+    wire signed [7:0] s3_twiddle1, s3_twiddle2, s3_twiddle3;
 
-    function [7:0] csub;
-        input signed [7:0] a;
-        input signed [7:0] b;
-        reg signed [4:0] ar, ai, br, bi;
-        reg signed [5:0] rr, ri;
-        begin
-            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
-            br = $signed(b[7:4]); bi = $signed(b[3:0]);
-            rr = ar - br; ri = ai - bi;
-            csub = {rr[3:0], ri[3:0]};
-        end
-    endfunction
+    complex_add add_s1_0(in0, in4, s1_add0);
+    complex_sub sub_s1_0(in0, in4, s1_sub0);
+    complex_add add_s1_1(in2, in6, s1_add1);
+    complex_sub sub_s1_1(in2, in6, s1_sub1);
+    complex_add add_s1_2(in1, in5, s1_add2);
+    complex_sub sub_s1_2(in1, in5, s1_sub2);
+    complex_add add_s1_3(in3, in7, s1_add3);
+    complex_sub sub_s1_3(in3, in7, s1_sub3);
 
-    function [7:0] w1;
-        input signed [7:0] a;
-        reg signed [4:0] ar, ai;
-        reg signed [13:0] rr, ri;
-        begin
-            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
-            rr = 181 * ar + 181 * ai;
-            ri = 181 * ai - 181 * ar;
-            w1 = {(rr >>> 8), (ri >>> 8)};
-        end
-    endfunction
+    twiddle_w2 tw_s2_1(s1[3], s2_twiddle1);
+    twiddle_w2 tw_s2_3(s1[7], s2_twiddle3);
+    complex_add add_s2_0(s1[0], s1[2], s2_add0);
+    complex_sub sub_s2_0(s1[0], s1[2], s2_sub0);
+    complex_add add_s2_1(s1[1], s2_twiddle1, s2_add1);
+    complex_sub sub_s2_1(s1[1], s2_twiddle1, s2_sub1);
+    complex_add add_s2_2(s1[4], s1[6], s2_add2);
+    complex_sub sub_s2_2(s1[4], s1[6], s2_sub2);
+    complex_add add_s2_3(s1[5], s2_twiddle3, s2_add3);
+    complex_sub sub_s2_3(s1[5], s2_twiddle3, s2_sub3);
 
-    function [7:0] w2;
-        input signed [7:0] a;
-        reg signed [4:0] ar, ai;
-        reg signed [4:0] nr;
-        begin
-            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
-            nr = -ar;
-            w2 = {ai[3:0], nr[3:0]};
-        end
-    endfunction
-
-    function [7:0] w3;
-        input signed [7:0] a;
-        reg signed [4:0] ar, ai;
-        reg signed [13:0] rr, ri;
-        begin
-            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
-            rr = -181 * ar + 181 * ai;
-            ri = -181 * ar - 181 * ai;
-            w3 = {(rr >>> 8), (ri >>> 8)};
-        end
-    endfunction
+    twiddle_w1 tw_s3_1(s2[5], s3_twiddle1);
+    twiddle_w2 tw_s3_2(s2[6], s3_twiddle2);
+    twiddle_w3 tw_s3_3(s2[7], s3_twiddle3);
+    complex_add add_s3_0(s2[0], s2[4], s3_add0);
+    complex_sub sub_s3_0(s2[0], s2[4], s3_sub0);
+    complex_add add_s3_1(s2[1], s3_twiddle1, s3_add1);
+    complex_sub sub_s3_1(s2[1], s3_twiddle1, s3_sub1);
+    complex_add add_s3_2(s2[2], s3_twiddle2, s3_add2);
+    complex_sub sub_s3_2(s2[2], s3_twiddle2, s3_sub2);
+    complex_add add_s3_3(s2[3], s3_twiddle3, s3_add3);
+    complex_sub sub_s3_3(s2[3], s3_twiddle3, s3_sub3);
 
     always @(posedge clk) begin
         if (reset) begin
@@ -112,34 +92,34 @@ module radix2_pipelined_fft(
             valid_out <= v2;
 
             // Stage 1: radix-2 butterflies after bit-reversed input order.
-            s1[0] <= cadd(in0, in4);
-            s1[1] <= csub(in0, in4);
-            s1[2] <= cadd(in2, in6);
-            s1[3] <= csub(in2, in6);
-            s1[4] <= cadd(in1, in5);
-            s1[5] <= csub(in1, in5);
-            s1[6] <= cadd(in3, in7);
-            s1[7] <= csub(in3, in7);
+            s1[0] <= s1_add0;
+            s1[1] <= s1_sub0;
+            s1[2] <= s1_add1;
+            s1[3] <= s1_sub1;
+            s1[4] <= s1_add2;
+            s1[5] <= s1_sub2;
+            s1[6] <= s1_add3;
+            s1[7] <= s1_sub3;
 
             // Stage 2: twiddles W8^0 and W8^2.
-            s2[0] <= cadd(s1[0], s1[2]);
-            s2[2] <= csub(s1[0], s1[2]);
-            s2[1] <= cadd(s1[1], w2(s1[3]));
-            s2[3] <= csub(s1[1], w2(s1[3]));
-            s2[4] <= cadd(s1[4], s1[6]);
-            s2[6] <= csub(s1[4], s1[6]);
-            s2[5] <= cadd(s1[5], w2(s1[7]));
-            s2[7] <= csub(s1[5], w2(s1[7]));
+            s2[0] <= s2_add0;
+            s2[2] <= s2_sub0;
+            s2[1] <= s2_add1;
+            s2[3] <= s2_sub1;
+            s2[4] <= s2_add2;
+            s2[6] <= s2_sub2;
+            s2[5] <= s2_add3;
+            s2[7] <= s2_sub3;
 
             // Stage 3: twiddles W8^0, W8^1, W8^2, and W8^3.
-            s3[0] <= cadd(s2[0], s2[4]);
-            s3[4] <= csub(s2[0], s2[4]);
-            s3[1] <= cadd(s2[1], w1(s2[5]));
-            s3[5] <= csub(s2[1], w1(s2[5]));
-            s3[2] <= cadd(s2[2], w2(s2[6]));
-            s3[6] <= csub(s2[2], w2(s2[6]));
-            s3[3] <= cadd(s2[3], w3(s2[7]));
-            s3[7] <= csub(s2[3], w3(s2[7]));
+            s3[0] <= s3_add0;
+            s3[4] <= s3_sub0;
+            s3[1] <= s3_add1;
+            s3[5] <= s3_sub1;
+            s3[2] <= s3_add2;
+            s3[6] <= s3_sub2;
+            s3[3] <= s3_add3;
+            s3[7] <= s3_sub3;
 
         end
     end
