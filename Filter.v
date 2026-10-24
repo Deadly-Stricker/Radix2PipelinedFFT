@@ -18,11 +18,9 @@ module filter(
     output reg [7:0] o8
 );
 
-reg [7:0] in [7:0]; 
-reg [7:0] op [7:0]; 
-
+reg [7:0] in [0:7];
+reg [7:0] op [0:7];
 integer i;
-
 
 always @* begin
     in[0] = in1;
@@ -33,17 +31,19 @@ always @* begin
     in[5] = in6;
     in[6] = in7;
     in[7] = in8;
-end
 
-always @* begin
-    
     for (i = 0; i < 8; i = i + 1) begin
         op[i] = 8'b0;
     end
-    
-    
-    for (i = 0; i < ind; i = i + 1) begin
-        op[i] = in[i];
+
+    if (ind <= 8) begin
+        for (i = 0; i < ind; i = i + 1) begin
+            op[i] = in[i];
+        end
+    end else begin
+        for (i = 0; i < 8; i = i + 1) begin
+            op[i] = in[i];
+        end
     end
 
     o1 = op[0];

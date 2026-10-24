@@ -1,23 +1,48 @@
 module testingdatapath;
-    reg[7:0] in1,in2,in3,in4,in5,in6,in7,in8;
-    wire [7:0]ou1,ou2,ou3,ou4,ou5,ou6,ou7,ou8;
-    reg clk1,clk2;
+    reg clk;
+    reg reset;
+    reg valid_in;
+    reg signed [7:0] x0, x1, x2, x3, x4, x5, x6, x7;
+    wire valid_out;
+    wire signed [7:0] y0, y1, y2, y3, y4, y5, y6, y7;
+    integer i;
 
-    datapath DUT(.in1(in1),.in2(in2),.in3(in3),.in4(in4),.in5(in5),.in6(in6),.in7(in7),.in8(in8),.clk_1(clk1),.clk_2(clk2),.out1(ou1),.out2(ou2),.out3(ou3),.out4(ou4),.out5(ou5),.out6(ou6),.out7(ou7),.out8(ou8));
-    always  begin
-        #1 clk1 =1; #1 clk1 = 0;
-        #1 clk2 =1; #1 clk2 = 0;
-    end
+    radix2_pipelined_fft dut(
+        .clk(clk), .reset(reset), .valid_in(valid_in),
+        .in0(x0), .in1(x1), .in2(x2), .in3(x3),
+        .in4(x4), .in5(x5), .in6(x6), .in7(x7),
+        .valid_out(valid_out),
+        .out0(y0), .out1(y1), .out2(y2), .out3(y3),
+        .out4(y4), .out5(y5), .out6(y6), .out7(y7)
+    );
+
+    always #5 clk = ~clk;
+
     initial begin
-        $monitor("Time : ",$time,"  input :  %d %d %d %d %d %d %d %d|output : %b %b %b %b %b %b %b %b ",in1,in2,in3,in4,in5,in6,in7,in8,ou1,ou2,ou3,ou4,ou5,ou6,ou7,ou8);
-        // $monitor("Time : ",$time,"  output : %d %d %d %d %d %d %d %d ",ou1,ou2,ou3,ou4,ou5,ou6,ou7,ou8);
-        // $monitor("%d",testingdatapath.DFT2.out6);
-        #2 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b0,8'b1,8'b10,8'b11,8'b100,8'b101,8'b110,8'b111};
-        #19 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b11,8'b10,8'b1,8'b1000,8'b111,8'b100,8'b110,8'b101};
-        #19 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b111,8'b110,8'b101,8'b100,8'b11,8'b10,8'b1,8'b0};
-        #19 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b11,8'b111,8'b10,8'b10,8'b11,8'b10,8'b1,8'b0};
-        #19 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b101,8'b10,8'b01,8'b110,8'b11,8'b10,8'b1,8'b0};
-        #19 {in1,in2,in3,in4,in5,in6,in7,in8}={8'b11,8'b0,8'b101,8'b100,8'b11,8'b10,8'b1,8'b0};
-        #1000 $finish;
+        clk = 1'b0;
+        reset = 1'b1;
+        valid_in = 1'b0;
+        {x0, x1, x2, x3, x4, x5, x6, x7} = 64'b0;
+        repeat (2) @(posedge clk);
+        @(negedge clk);
+        reset = 1'b0;
+
+        // Impulse input: every 8-point FFT output must be 1 + 0i (8'h10).
+        x0 = 8'h10;
+        valid_in = 1'b1;
+        @(posedge clk);
+        @(negedge clk);
+        valid_in = 1'b0;
+        repeat (2) @(posedge clk);
+        #1;
+        if (!valid_out)
+            $fatal(1, "valid_out was not asserted after three pipeline stages");
+        if ({y0, y1, y2, y3, y4, y5, y6, y7} !==
+            {8'h10, 8'h10, 8'h10, 8'h10, 8'h10, 8'h10, 8'h10, 8'h10})
+            $fatal(1, "impulse response failed: %h %h %h %h %h %h %h %h",
+                   y0, y1, y2, y3, y4, y5, y6, y7);
+
+        $display("8-point radix-2 pipelined FFT test passed");
+        $finish;
     end
 endmodule

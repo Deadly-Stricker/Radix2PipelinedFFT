@@ -1,118 +1,170 @@
-module datapath(
-    input [7:0] in1,
-    input [7:0] in2,
-    input [7:0] in3,
-    input [7:0] in4,
-    input [7:0] in5,
-    input [7:0] in6,
-    input [7:0] in7,
-    input [7:0] in8,
-    input clk_1,
-    input clk_2,
-    output signed[7:0] out1,
-    output signed [7:0] out2,
-    output signed [7:0] out3,
-    output signed [7:0] out4,
-    output signed [7:0] out5,
-    output signed [7:0] out6,
-    output signed [7:0] out7,
-    output signed [7:0] out8
+module radix2_pipelined_fft(
+    input  wire              clk,
+    input  wire              reset,
+    input  wire              valid_in,
+    input  wire signed [7:0] in0,
+    input  wire signed [7:0] in1,
+    input  wire signed [7:0] in2,
+    input  wire signed [7:0] in3,
+    input  wire signed [7:0] in4,
+    input  wire signed [7:0] in5,
+    input  wire signed [7:0] in6,
+    input  wire signed [7:0] in7,
+    output reg               valid_out,
+    output wire signed [7:0] out0,
+    output wire signed [7:0] out1,
+    output wire signed [7:0] out2,
+    output wire signed [7:0] out3,
+    output wire signed [7:0] out4,
+    output wire signed [7:0] out5,
+    output wire signed [7:0] out6,
+    output wire signed [7:0] out7
 );
-    wire signed[7:0] L10_ou1,L10_ou2,L10_ou3,L10_ou4,L10_ou5,L10_ou6,L10_ou7,L10_ou8;
-    wire signed[7:0] L10_in1,L10_in2,L10_in3,L10_in4,L10_in5,L10_in6,L10_in7,L10_in8;
-    Latch7_0 L10 (in1,clk_1,L10_in1);
-    Latch7_0 L20 (in2,clk_1,L10_in2);
-    Latch7_0 L30 (in3,clk_1,L10_in3);
-    Latch7_0 L40 (in4,clk_1,L10_in4);
-    Latch7_0 L50 (in5,clk_1,L10_in5);
-    Latch7_0 L60 (in6,clk_1,L10_in6);
-    Latch7_0 L70 (in7,clk_1,L10_in7);
-    Latch7_0 L80 (in8,clk_1,L10_in8);
-    EighttoFour M1 (L10_in1,L10_in2,L10_in3,L10_in4,L10_in5,L10_in6,L10_in7,L10_in8,L10_ou1,L10_ou2,L10_ou3,L10_ou4,L10_ou5,L10_ou6,L10_ou7,L10_ou8);
+    reg signed [7:0] s1 [0:7];
+    reg signed [7:0] s2 [0:7];
+    reg signed [7:0] s3 [0:7];
+    reg v1, v2;
+    integer i;
 
-    wire signed[7:0] L11_ou1,L11_ou2,L11_ou3,L11_ou4,L11_ou5,L11_ou6,L11_ou7,L11_ou8;
-    wire signed[7:0] L11_in1,L11_in2,L11_in3,L11_in4,L11_in5,L11_in6,L11_in7,L11_in8;
+    assign out0 = s3[0];
+    assign out1 = s3[1];
+    assign out2 = s3[2];
+    assign out3 = s3[3];
+    assign out4 = s3[4];
+    assign out5 = s3[5];
+    assign out6 = s3[6];
+    assign out7 = s3[7];
 
-    Latch7_0 L11(L10_ou1,clk_2,L11_in1);
-    Latch7_0 L21(L10_ou2,clk_2,L11_in2);
-    Latch7_0 L31(L10_ou3,clk_2,L11_in3);
-    Latch7_0 L41(L10_ou4,clk_2,L11_in4);
-    Latch7_0 L51(L10_ou5,clk_2,L11_in5);
-    Latch7_0 L61(L10_ou6,clk_2,L11_in6);
-    Latch7_0 L71(L10_ou7,clk_2,L11_in7);
-    Latch7_0 L81(L10_ou8,clk_2,L11_in8);
-    // Latch7_0 L11(L10_ou1,clk_2,L11_ou1);
-    FourtoTwo M2 (L11_in1,L11_in2,L11_in3,L11_in4,L11_ou1,L11_ou2,L11_ou3,L11_ou4);
-    FourtoTwo M3 (L11_in5,L11_in6,L11_in7,L11_in8,L11_ou5,L11_ou6,L11_ou7,L11_ou8);
-    
-    wire signed[7:0] L12_ou1,L12_ou2,L12_ou3,L12_ou4,L12_ou5,L12_ou6,L12_ou7,L12_ou8;
-    wire signed[7:0] L12_in1,L12_in2,L12_in3,L12_in4,L12_in5,L12_in6,L12_in7,L12_in8;
+    function [7:0] cadd;
+        input signed [7:0] a;
+        input signed [7:0] b;
+        reg signed [4:0] ar, ai, br, bi;
+        reg signed [5:0] rr, ri;
+        begin
+            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
+            br = $signed(b[7:4]); bi = $signed(b[3:0]);
+            rr = ar + br; ri = ai + bi;
+            cadd = {rr[3:0], ri[3:0]};
+        end
+    endfunction
 
-    Latch7_0 L12(L11_ou1,clk_1,L12_in1);
-    Latch7_0 L22(L11_ou2,clk_1,L12_in2);
-    Latch7_0 L32(L11_ou3,clk_1,L12_in3);
-    // Latch7_0 L42(L11_ou3,clk_1,L12_in3);
-    Latch7_0 L52(L11_ou4,clk_1,L12_in4);
-    Latch7_0 L62(L11_ou5,clk_1,L12_in5);
-    Latch7_0 L72(L11_ou6,clk_1,L12_in6);
-    Latch7_0 L82(L11_ou7,clk_1,L12_in7);
-    Latch7_0 L42(L11_ou8,clk_1,L12_in8);
+    function [7:0] csub;
+        input signed [7:0] a;
+        input signed [7:0] b;
+        reg signed [4:0] ar, ai, br, bi;
+        reg signed [5:0] rr, ri;
+        begin
+            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
+            br = $signed(b[7:4]); bi = $signed(b[3:0]);
+            rr = ar - br; ri = ai - bi;
+            csub = {rr[3:0], ri[3:0]};
+        end
+    endfunction
 
+    function [7:0] w1;
+        input signed [7:0] a;
+        reg signed [4:0] ar, ai;
+        reg signed [13:0] rr, ri;
+        begin
+            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
+            rr = 181 * ar + 181 * ai;
+            ri = 181 * ai - 181 * ar;
+            w1 = {(rr >>> 8), (ri >>> 8)};
+        end
+    endfunction
 
-    DFT2 M4 (L12_in1,L12_in2,L12_ou1,L12_ou2);
-    DFT2 M5 (L12_in3,L12_in4,L12_ou3,L12_ou4);
-    DFT2 M6 (L12_in5,L12_in6,L12_ou5,L12_ou6);
-    DFT2 M7 (L12_in7,L12_in8,L12_ou7,L12_ou8);
-    // DFT2 M3 (L12_in1,L12_in2,L12_ou1,L12_ou2);
+    function [7:0] w2;
+        input signed [7:0] a;
+        reg signed [4:0] ar, ai;
+        reg signed [4:0] nr;
+        begin
+            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
+            nr = -ar;
+            w2 = {ai[3:0], nr[3:0]};
+        end
+    endfunction
 
-    wire signed[7:0] L13_ou1,L13_ou2,L13_ou3,L13_ou4,L13_ou5,L13_ou6,L13_ou7,L13_ou8;
-    wire signed[7:0] L13_in1,L13_in2,L13_in3,L13_in4,L13_in5,L13_in6,L13_in7,L13_in8;
-    // reg [7:0] out1,out2,out3,out4,out5,out6,out7,out8;
+    function [7:0] w3;
+        input signed [7:0] a;
+        reg signed [4:0] ar, ai;
+        reg signed [13:0] rr, ri;
+        begin
+            ar = $signed(a[7:4]); ai = $signed(a[3:0]);
+            rr = -181 * ar + 181 * ai;
+            ri = -181 * ar - 181 * ai;
+            w3 = {(rr >>> 8), (ri >>> 8)};
+        end
+    endfunction
 
-    Latch7_0 L13(L12_ou1,clk_2,L13_in1);
-    Latch7_0 L23(L12_ou2,clk_2,L13_in2);
-    Latch7_0 L33(L12_ou3,clk_2,L13_in3);
-    // Latch7_0 L43(L12_ou3,clk_2,out4);
-    Latch7_0 L53(L12_ou4,clk_2,L13_in4);
-    Latch7_0 L63(L12_ou5,clk_2,L13_in5);
-    Latch7_0 L73(L12_ou6,clk_2,L13_in6);
-    Latch7_0 L83(L12_ou7,clk_2,L13_in7);
-    Latch7_0 L43(L12_ou8,clk_2,L13_in8);
+    always @(posedge clk) begin
+        if (reset) begin
+            valid_out <= 1'b0;
+            v1 <= 1'b0;
+            v2 <= 1'b0;
+            for (i = 0; i < 8; i = i + 1) begin
+                s1[i] <= 8'b0;
+                s2[i] <= 8'b0;
+                s3[i] <= 8'b0;
+            end
+        end else begin
+            v1 <= valid_in;
+            v2 <= v1;
+            valid_out <= v2;
 
+            // Stage 1: radix-2 butterflies after bit-reversed input order.
+            s1[0] <= cadd(in0, in4);
+            s1[1] <= csub(in0, in4);
+            s1[2] <= cadd(in2, in6);
+            s1[3] <= csub(in2, in6);
+            s1[4] <= cadd(in1, in5);
+            s1[5] <= csub(in1, in5);
+            s1[6] <= cadd(in3, in7);
+            s1[7] <= csub(in3, in7);
 
-    // DFT4 D1 (L13_in1,L13_in2,L13_in3,L13_in4,out1,out2,out3,out4);
-    // DFT4 D2 (L13_in5,L13_in6,L13_in7,L13_in8,out5,out6,out7,out8);
-    DFT4 D1 (L13_in1,L13_in2,L13_in3,L13_in4,L13_ou1,L13_ou2,L13_ou3,L13_ou4);
-    DFT4 D2 (L13_in5,L13_in6,L13_in7,L13_in8,L13_ou5,L13_ou6,L13_ou7,L13_ou8);
+            // Stage 2: twiddles W8^0 and W8^2.
+            s2[0] <= cadd(s1[0], s1[2]);
+            s2[2] <= csub(s1[0], s1[2]);
+            s2[1] <= cadd(s1[1], w2(s1[3]));
+            s2[3] <= csub(s1[1], w2(s1[3]));
+            s2[4] <= cadd(s1[4], s1[6]);
+            s2[6] <= csub(s1[4], s1[6]);
+            s2[5] <= cadd(s1[5], w2(s1[7]));
+            s2[7] <= csub(s1[5], w2(s1[7]));
 
-    wire signed[7:0] L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8;
-    wire signed[7:0] L14_ou1,L14_ou2,L14_ou3,L14_ou4,L14_ou5,L14_ou6,L14_ou7,L14_ou8;
+            // Stage 3: twiddles W8^0, W8^1, W8^2, and W8^3.
+            s3[0] <= cadd(s2[0], s2[4]);
+            s3[4] <= csub(s2[0], s2[4]);
+            s3[1] <= cadd(s2[1], w1(s2[5]));
+            s3[5] <= csub(s2[1], w1(s2[5]));
+            s3[2] <= cadd(s2[2], w2(s2[6]));
+            s3[6] <= csub(s2[2], w2(s2[6]));
+            s3[3] <= cadd(s2[3], w3(s2[7]));
+            s3[7] <= csub(s2[3], w3(s2[7]));
 
+        end
+    end
+endmodule
 
-    Latch7_0 L14(L13_ou1,clk_1,L14_in1);
-    Latch7_0 L24(L13_ou2,clk_1,L14_in2);
-    Latch7_0 L34(L13_ou3,clk_1,L14_in3);
-    // Latch7_0 L43(L12_ou3,clk_2,out4);
-    Latch7_0 L44(L13_ou4,clk_1,L14_in4);
-    Latch7_0 L54(L13_ou5,clk_1,L14_in5);
-    Latch7_0 L64(L13_ou6,clk_1,L14_in6);
-    Latch7_0 L74(L13_ou7,clk_1,L14_in7);
-    Latch7_0 L84(L13_ou8,clk_1,L14_in8);
+// Compatibility wrapper for the original two-clock project interface.
+module datapath(
+    input [7:0] in1, input [7:0] in2, input [7:0] in3, input [7:0] in4,
+    input [7:0] in5, input [7:0] in6, input [7:0] in7, input [7:0] in8,
+    input clk_1, input clk_2,
+    output signed [7:0] out1, output signed [7:0] out2,
+    output signed [7:0] out3, output signed [7:0] out4,
+    output signed [7:0] out5, output signed [7:0] out6,
+    output signed [7:0] out7, output signed [7:0] out8
+);
+    wire unused_clk = clk_2;
+    wire unused_reset = 1'b0;
+    wire unused_valid;
 
-    DFT8 F (L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8,L14_ou1,L14_ou2,L14_ou3,L14_ou4,L14_ou5,L14_ou6,L14_ou7,L14_ou8);
-
-    wire signed[7:0] L15_in1,L15_in2,L15_in3,L15_in4,L15_in5,L15_in6,L15_in7,L15_in8;
-
-
-    Latch7_0 L15(L14_ou1,clk_2,L15_in1);
-    Latch7_0 L25(L14_ou2,clk_2,L15_in2);
-    Latch7_0 L35(L14_ou3,clk_2,L15_in3);
-    // Latch7_0 L43(L12_ou3,clk_2,out4);
-    Latch7_0 L45(L14_ou4,clk_2,L15_in4);
-    Latch7_0 L55(L14_ou5,clk_2,L15_in5);
-    Latch7_0 L65(L14_ou6,clk_2,L15_in6);
-    Latch7_0 L75(L14_ou7,clk_2,L15_in7);
-    Latch7_0 L85(L14_ou8,clk_2,L15_in8);
-
-    filter Fk(L14_in1,L14_in2,L14_in3,L14_in4,L14_in5,L14_in6,L14_in7,L14_in8,4'd5,out1,out2,out3,out4,out5,out6,out7,out8);
+    radix2_pipelined_fft core(
+        .clk(clk_1), .reset(unused_reset), .valid_in(1'b1),
+        .in0(in1), .in1(in2), .in2(in3), .in3(in4),
+        .in4(in5), .in5(in6), .in6(in7), .in7(in8),
+        .valid_out(unused_valid),
+        .out0(out1), .out1(out2), .out2(out3), .out3(out4),
+        .out4(out5), .out5(out6), .out6(out7), .out7(out8)
+    );
 endmodule
