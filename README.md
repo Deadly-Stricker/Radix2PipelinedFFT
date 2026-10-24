@@ -13,6 +13,12 @@ The pipeline keeps 19 bits per component internally to accommodate butterfly
 growth. The final outputs are packed back to 16-bit real and imaginary
 components.
 
+For FPGA top-level use, instantiate [`fft_serial`](./fft_serial.v). It accepts
+one 32-bit sample at a time through `in_valid`, `in_ready`, and `in_data`, then
+produces one 32-bit FFT bin at a time through `out_valid`, `out_ready`, and
+`out_data`. This avoids exposing all eight inputs and outputs as physical FPGA
+pins.
+
 The [`radix2_pipelined_fft`](./DataPath.v) module contains three registered
 radix-2 butterfly stages. It accepts one 8-point frame per clock when
 `valid_in` is asserted and produces the corresponding frame three clocks later
